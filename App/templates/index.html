@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dropit</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/logo.png' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      href="https://unpkg.com/filepond@^4/dist/filepond.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header class="head my-3">
+        <nav class="navbar navbar-expand-lg navbar-light head__custom-nav">
+          <a class="navbar-brand d-flex align-items-center" href="#">
+            <img src="{% static 'images/logo.png' %}" alt="website logo" />
+            <span>Dropit</span>
+          </a>
+        </nav>
+      </header>
+    </div>
+    <div class="para">
+      <p>Send, Receive and Work Together With Your Friends on Every File</p>
+    </div>
+    <div class="cont">
+      <form action="">
+        <input
+          type="file"
+          class="filepond"
+          name="filepond"
+          multiple
+          data-allow-reorder="true"
+          data-max-file-size="5MB"
+          data-max-files="5"
+        />
+        <button type="button" class="btn btn-primary" onclick="upload_file()">
+          Upload Files
+        </button>
+        <button type="button" class="btn btn-success" onclick="copy_url()">
+          Copy to Clipboard
+        </button>
+      </form>
+    </div>
+  </body>
+  <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    FilePond.registerPlugin(FilePondPluginFileValidateSize);
+    const inputElement = document.querySelector("input[type='file']");
+    const pond = FilePond.create(inputElement, {
+      maxFileSize: "5MB",
+    });
+
+    var url = null;
+    var flag = 1;
+    var maxFileSize = 50000000
+
+    function upload_file() {
+      var files = pond.getFiles();
+      var formdata = new FormData();
+      if (files.length == 0) alert("Please add File First...file is not added");
+      else {
+        for (var i = 0; i < files.length; i++) {
+          if (files[i].file.size > maxFileSize) {
+            alert("File Size is too Large...");
+            flag = 0;
+            location.reload()
+          }
+
+          formdata.append("files", files[i].file);
+        }
+
+        if (flag) {
+          fetch("/handle/", {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{csrf_token}}" },
+            body: formdata,
+          })
+            .then((res) => res.json())
+            .then((result) => {
+              alert(
+                "Files uploaded Succesfully...Click Copy to Clipboard to copy the link"
+              );
+              url = `http://127.0.0.1:8000/download/${result.data.folder}`;
+            });
+        }
+      }
+    }
+
+    function copy_url() {
+      if (!url) {
+        alert("Please Upload Files First...Link is not created yet");
+      } else {
+        navigator.clipboard.writeText(url);
+
+        alert("Link is Copied successfully....." + url);
+        location.reload()
+      }
+    }
+  </script>
+</html>
