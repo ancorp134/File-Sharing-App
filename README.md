@@ -4,6 +4,6 @@ A Platform in which user can shares files with their friends. In Dropit , user c
 and this url can be used to download files at a reciever end.
 
 
-Languages and Tools :- HTML , CSS , javaScript , Python , Django RestFramework etc.
+Languages and Tools :- HTML , CSS , JavaScript , Python , Django RestFramework etc.
 
 Link :- https://dropit-files.herokuapp.com/
