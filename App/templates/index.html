@@ -54,16 +54,15 @@
   <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
   <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+ <script>
+
     FilePond.registerPlugin(FilePondPluginFileValidateSize);
     const inputElement = document.querySelector("input[type='file']");
-    const pond = FilePond.create(inputElement, {
-      maxFileSize: "5MB",
-    });
-
+    const pond = FilePond.create(inputElement);
+      
+    
     var url = null;
-    var flag = 1;
-    var maxFileSize = 50000000
+    
 
     function upload_file() {
       var files = pond.getFiles();
@@ -71,16 +70,10 @@
       if (files.length == 0) alert("Please add File First...file is not added");
       else {
         for (var i = 0; i < files.length; i++) {
-          if (files[i].file.size > maxFileSize) {
-            alert("File Size is too Large...");
-            flag = 0;
-            location.reload()
-          }
-
           formdata.append("files", files[i].file);
         }
 
-        if (flag) {
+        
           fetch("/handle/", {
             method: "POST",
             headers: { "X-CSRFToken": "{{csrf_token}}" },
@@ -93,7 +86,7 @@
               );
               url = `https://dropit-files.herokuapp.com/download/${result.data.folder}`;
             });
-        }
+        
       }
     }
 
