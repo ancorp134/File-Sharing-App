@@ -42,6 +42,8 @@
           data-max-file-size="5MB"
           data-max-files="5"
         />
+       
+        <br>
         <button type="button" class="btn btn-primary" onclick="upload_file()">
           Upload Files
         </button>
@@ -61,6 +63,8 @@
 
     var url = null;
     var flag = 1;
+
+   
    
 
     function upload_file() {
@@ -86,6 +90,7 @@
           })
             .then((res) => res.json())
             .then((result) => {
+             
               alert(
                 "Files uploaded Succesfully...Click Copy to Clipboard to copy the link"
               );
